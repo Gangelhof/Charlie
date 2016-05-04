@@ -10,6 +10,7 @@ import charlie.control.GameInitializer;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -17,17 +18,17 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author RunEvil
  */
-public class MainWindow extends javax.swing.JFrame 
-{
+public class MainWindow extends javax.swing.JFrame {
+
     DrugController drugControl;
     GameInitializer gameInitializer;
     DefaultTableModel model;
+    DefaultTableModel modelInventory;
 
     /**
      * Creates new form MainWindow
      */
-    public MainWindow(String name) 
-    {
+    public MainWindow(String name) {
         initComponents();
         drugControl = new DrugController();
         gameInitializer = new GameInitializer();
@@ -35,88 +36,75 @@ public class MainWindow extends javax.swing.JFrame
         setLocationRelativeTo(null);
         start(name);
     }
-    
-    private void start(String name){
+
+    private void start(String name) {
         gameInitializer.setCurrentCountry("Denmark");
         gameInitializer.setDay(1);
         jLabelCountry2.setText(gameInitializer.getCurrentCountry() + "'s");
-        jLabelPerson2.setText(name+"'s");
-        // Country's list of drugs filled up
+        jLabelPerson2.setText(name + "'s");
         model = (DefaultTableModel) jTableDrugs.getModel();
-        addDrugsToCountry();
-        // User's list of drugs filled up...
-        
+        addDrugsToCountry(); // Country's list of drugs filled up
+        modelInventory = (DefaultTableModel) jTableDrugs1.getModel();
     }
-    
-    private void showBuySell()
-    {
-        jDialogBuySell.setMinimumSize(new Dimension(350,200)); // Fix size of window....
+
+    private void showBuySell() {
+        jDialogBuySell.setMinimumSize(new Dimension(350, 200)); // Fix size of window....
         jDialogBuySell.setVisible(true);
         jDialogBuySell.setLocationRelativeTo(this);
         jFormattedTextFieldAmount.setText("");
     }
-    
-    public void updateWindow(){
+
+    public void updateWindow() {
         // Update screen to the selected country
         jLabelCountry2.setText(jComboBoxCountries.getItemAt(jComboBoxCountries.getSelectedIndex()));
-        
+
         // Set the currentCountry to the selected country
         gameInitializer.setCurrentCountry(jComboBoxCountries.getItemAt(jComboBoxCountries.getSelectedIndex()));
-        
+
         // Calculate new prices on drugs...
         drugControl.calculateDrug();
-        
+
         // calculate user's money...
-        jLabelMoneyLeft.setText("Updated money..."); // Get money from stash.
-        
-        
+        jLabelMoneyLeft.setText("" + gameInitializer.getMoney()); // Get money from stash.
+
         // update progressbarDay...
         jProgressBarDay.setValue(gameInitializer.getDay());
         jProgressBarDay.setString(gameInitializer.getDay() + "/20");
-        
+
         //Update drugslist..
-        
         //Update inventory..
-        
     }
-    
-    public void addDrugsToCountry()
-    {
-        //String temp[] = {"","",""};
-//        ArrayList ar = new ArrayList<List<String>>();
-//            ar =    gameInitializer.getDrugs();
-//        String[] st = new String[4];
-//          st =  gameInitializer.getColumnNames();
-//          System.out.println(ar);
-//          System.out.println(st);
-//        DefaultTableModel tableModel = new DefaultTableModel(gameInitializer.getDrugs(), gameInitializer.getColumnNames());
-//        JTable table = new JTable(tableModel);
-        //gameInitializer.getDrugs(), gameInitializer.getColumnNames()
-        
+
+    public void addDrugsToCountry() {
         //Clear the table of content
-        while (model.getRowCount()>0)
-          {
-             model.removeRow(0); 
-          }
-        
+        while (model.getRowCount() > 0) {
+            model.removeRow(0);
+        }
+
         //Fill up table with drugs
-        for (int i = 0; i < gameInitializer.getDrugs().size(); i++) 
-        {
+        for (int i = 0; i < gameInitializer.getDrugs().size(); i++) {
             String name = gameInitializer.getDrugs().get(i).getName();
-            double price = gameInitializer.getDrugs().get(i).getPrice(); 
+            double price = gameInitializer.getDrugs().get(i).getPrice();
             int amount = gameInitializer.getDrugs().get(i).getAvailability();
-            
-            //System.out.println(()gameInitializer.getDrugs()[i][0].get(0).get);
-//            Object[] data = {"name", "price", "amount"};
-           // System.out.println(data);
-           // tableModel.addRow(data);
-           //model.setRowCount(0);
-           
-           model.addRow( new Object[]{ name, price, amount } );
+
+            model.addRow(new Object[]{name, price, amount});
         }
     }
-    
-    
+
+    public void addDrugsToInventory() {
+        //Clear the table of content
+        while (modelInventory.getRowCount() > 0) {
+            modelInventory.removeRow(0);
+        }
+
+        //Fill up table with drugs
+        for (int i = 0; i < gameInitializer.getStashDrugs().size(); i++) {
+            String name = gameInitializer.getDrugs().get(i).getName();
+            int amount = gameInitializer.getDrugs().get(i).getAvailability();
+
+            modelInventory.addRow(new Object[]{name, amount});
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -403,8 +391,7 @@ public class MainWindow extends javax.swing.JFrame
         String selectedCountry = jComboBoxCountries.getItemAt(jComboBoxCountries.getSelectedIndex());
         boolean gameOver = gameInitializer.nextDay(selectedCountry);
         updateWindow(); // Update screen (to the selected country, recalculateDrug, update inventory etc)
-        if(gameOver)
-        {
+        if (gameOver) {
             this.dispose();
             System.exit(0);
         }
@@ -417,66 +404,89 @@ public class MainWindow extends javax.swing.JFrame
 
     private void jButtonBuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuyActionPerformed
         // TODO add your handling code here:
-        
-        // Get drug from dropdown-list and get price of drug from arraylist.
-        double price;
-        price = gameInitializer.getDrugs().get(jComboBoxSelectDrug.getSelectedIndex()).getPrice();
-        
-        // Get amount of selected drug.
-        int amount = Integer.parseInt(jFormattedTextFieldAmount.getText());
-        
-        //Check if amount is available!!!
-        
-        // calculate price of drugs bought.
-        double drugPrice = price * amount;
-        
-        // Subtract price of drugs bought from user's money..
-        double cash = Double.parseDouble(jLabelMoneyLeft.getText());
-        double newCash = cash - drugPrice; 
-        jLabelMoneyLeft.setText("" + newCash);
-        
-        // Set user's money in stash
-        gameInitializer.setMoney(newCash);
-        
-        // Add drug to user's arraylist in Stash and update inventory.
-        
-        
-        // Change amount in arraylist and update druglist of country.
-        
-        
 
+            // Get amount of selected drug.
+            int amount = Integer.parseInt(jFormattedTextFieldAmount.getText());
+            int amountDrug = gameInitializer.getDrugs().get(jComboBoxSelectDrug.getSelectedIndex()).getAvailability();
+            
+        //Check if amount is available!!!
+        if (amount <= amountDrug) {
+            
+            // Get drug from dropdown-list and get price of drug from arraylist.
+            double price = gameInitializer.getDrugs().get(jComboBoxSelectDrug.getSelectedIndex()).getPrice();
+            
+            // calculate price of drugs bought.
+            double drugPrice = price * amount;
+            double moneyLeft = gameInitializer.getMoney();
+            
+            if(drugPrice <= moneyLeft){
+
+                // Subtract price of drugs bought from user's money..
+                double newCash = moneyLeft - drugPrice;
+                jLabelMoneyLeft.setText("" + newCash);
+
+                // Set user's money in stash
+                gameInitializer.setMoney(newCash);
+
+                // Add drug to user's arraylist in Stash 
+                gameInitializer.setDrugs(gameInitializer.getDrugs().get(jComboBoxSelectDrug.getSelectedIndex()).getName());
+                addDrugsToInventory();
+
+                // Change amount in arraylist and update druglist of country.
+            
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "Not enough cash! \nYou cannot afford this amount of drugs! \nPlease try again!");
+            }
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "Not enough drugs! \nThe amount you have chosen is not available! \nPlease try again!");
+        }
         //NB!!! Laves som metode(r) i DrugController, som kaldes herfra, så selvom udregning osv forgår andet steds.
     }//GEN-LAST:event_jButtonBuyActionPerformed
 
     private void jButtonSellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSellActionPerformed
         // TODO add your handling code here:
-        
-        // Get drug from dropdown-list and get price of drug from arraylist..
-        double price;
-        price = gameInitializer.getDrugs().get(jComboBoxSelectDrug.getSelectedIndex()).getPrice();
-        
-        // Get amount of selected drug.
-        int amount = Integer.parseInt(jFormattedTextFieldAmount.getText());
-        
+
+        String name = gameInitializer.getDrugs().get(jComboBoxSelectDrug.getSelectedIndex()).getName();
+       
         //Check if drug & amount is in inventory!!!
+        if(gameInitializer.checkInventory(name)){
+            
+            // Get amount of selected drug.
+            int amount = Integer.parseInt(jFormattedTextFieldAmount.getText());
+            int amountInventory = gameInitializer.getDrugs().get(jComboBoxSelectDrug.getSelectedIndex()).getAvailability();
+            
+            if(amount < amountInventory){
         
-        // calculate price of drugs sold.
-        double drugPrice = price * amount;
+                // Get drug from dropdown-list and get price of drug from arraylist..
+                double price;
+                price = gameInitializer.getDrugs().get(jComboBoxSelectDrug.getSelectedIndex()).getPrice();
         
-        // Add price of drugs sold to user's money.
-        double cash = Double.parseDouble(jLabelMoneyLeft.getText());
-        double newCash = cash + drugPrice; 
-        jLabelMoneyLeft.setText("" + newCash);
+                // calculate price of drugs sold.
+                double drugPrice = price * amount;
+
+                // Add price of drugs sold to user's money.
+                double cash = gameInitializer.getMoney();
+                double newCash = cash + drugPrice;
+                jLabelMoneyLeft.setText("" + newCash);
+
+                // Set user's money in stash
+                gameInitializer.setMoney(newCash);
+
+                // Remove drug to user's arraylist in Stash and update inventory.
         
-        // Set user's money in stash
-        gameInitializer.setMoney(newCash);
+                // Change amount in arraylist and update druglist of country.
+            
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "Not enough drugs! \nYou do not have the chosen amount of the drug in your inventory! \nPlease try again!");
+            }
         
-        // Remove drug to user's arraylist in Stash and update inventory.
-        
-        
-        // Change amount in arraylist and update druglist of country.
-        
-        
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Wrong drug! \nYou do not have the chosen drug in your inventory! \nPlease try again!");
+        }
         //NB!!! Laves som metode(r) i DrugController, som kaldes herfra, så selvom udregning osv forgår andet steds.
     }//GEN-LAST:event_jButtonSellActionPerformed
 
@@ -490,7 +500,6 @@ public class MainWindow extends javax.swing.JFrame
     /**
      * @param args the command line arguments
      */
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonBuy;

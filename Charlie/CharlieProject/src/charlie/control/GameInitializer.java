@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 public class GameInitializer implements IGameInitializer {
     
     ArrayList<Drug> startDrugs;
+    ArrayList<Drug> inventoryDrugs;
     ArrayList<Country> countries;
     //private String[] columnNames;
     private String currentCountry;
@@ -32,6 +33,7 @@ public class GameInitializer implements IGameInitializer {
         startDrugs = initializeDrugs();
         countries = initializeCountries(startDrugs);
         stash = new Stash();
+        inventoryDrugs = new ArrayList();
     }
 
     @Override
@@ -358,10 +360,38 @@ public class GameInitializer implements IGameInitializer {
         return stash;
     }
     
-    public void setDrugs(){
+    public ArrayList getStashDrugs(){
+        return stash.getDrugs();
+    }
+    
+    public void setDrugs(String str){
         
-        //ArrayList<Drug> drugs
+        for (int i = 0; i < startDrugs.size(); i++) {
+            
+            if(str.equals(startDrugs.get(i).getName()))
+                
+                inventoryDrugs.add(startDrugs.get(i));
+        }
+        stash.setDrugs(inventoryDrugs);
+    }
+    
+    public boolean checkInventory(String str){
+        boolean inventoryDrug = true;
         
+        if (inventoryDrugs.size() > 0){
+            for (int i = 0; i < inventoryDrugs.size(); i++) {
+                if (str.equals(inventoryDrugs.get(i).getName())){
+                    inventoryDrug = true;
+                }
+                else{
+                    inventoryDrug = false;
+                    }
+            }
+        }
+        else{
+            inventoryDrug = false;
+        }
+        return inventoryDrug;
     }
     
     public double getMoney(){
