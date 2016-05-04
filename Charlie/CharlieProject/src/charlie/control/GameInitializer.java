@@ -21,14 +21,17 @@ public class GameInitializer implements IGameInitializer {
     
     ArrayList<Drug> startDrugs;
     ArrayList<Country> countries;
-    private String[] columnNames;
+    //private String[] columnNames;
     private String currentCountry;
     private int day;
+    private Stash stash;
+    private double money;
     
     public GameInitializer()
     {
         startDrugs = initializeDrugs();
         countries = initializeCountries(startDrugs);
+        stash = new Stash();
     }
 
     @Override
@@ -125,7 +128,7 @@ public class GameInitializer implements IGameInitializer {
 
         Drug crystalMeth = new Drug() {
             {
-                name = "Blue Sky";
+                name = "Crystal Meth";
                 price = 800.00;
                 availability = 38;
                 priceStrategy = 0;
@@ -286,9 +289,9 @@ public class GameInitializer implements IGameInitializer {
         return countries;
     }
     
-    public String[] getColumnNames(){
-        return columnNames;
-    }
+//    public String[] getColumnNames(){
+//        return columnNames;
+//    }
 
     
     public ArrayList<Drug> getDrugs()
@@ -350,6 +353,26 @@ public class GameInitializer implements IGameInitializer {
     public int getDay(){
         return day;
     }
+    
+    public Stash getStash(){
+        return stash;
+    }
+    
+    public void setDrugs(){
+        
+        //ArrayList<Drug> drugs
+        
+    }
+    
+    public double getMoney(){
+        money = stash.getMoney();
+        return money;
+    }
+    
+    public void setMoney(double money){
+        stash.setMoney(money);
+    }
+    
       @Override
     public User initializeUser(String input) {
  return new User() {

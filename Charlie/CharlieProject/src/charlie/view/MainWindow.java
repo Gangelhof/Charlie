@@ -41,16 +41,11 @@ public class MainWindow extends javax.swing.JFrame
         gameInitializer.setDay(1);
         jLabelCountry2.setText(gameInitializer.getCurrentCountry() + "'s");
         jLabelPerson2.setText(name+"'s");
-        // Country's list of drugs filled up...
-        //jTableDrugs.add(addDrugsToCountry());
-         //DefaultTableModel tableModel = new DefaultTableModel(gameInitializer.getDrugs(), gameInitializer.getColumnNames());
-        //JTable table = new JTable(tableModel);
+        // Country's list of drugs filled up
         model = (DefaultTableModel) jTableDrugs.getModel();
         addDrugsToCountry();
-       // System.out.println(model.getRowCount());
-        
-        
         // User's list of drugs filled up...
+        
     }
     
     private void showBuySell()
@@ -62,14 +57,18 @@ public class MainWindow extends javax.swing.JFrame
     }
     
     public void updateWindow(){
-        // update to the selected country...
+        // Update screen to the selected country
         jLabelCountry2.setText(jComboBoxCountries.getItemAt(jComboBoxCountries.getSelectedIndex()));
+        
+        // Set the currentCountry to the selected country
+        gameInitializer.setCurrentCountry(jComboBoxCountries.getItemAt(jComboBoxCountries.getSelectedIndex()));
         
         // Calculate new prices on drugs...
         drugControl.calculateDrug();
         
         // calculate user's money...
         jLabelMoneyLeft.setText("Updated money..."); // Get money from stash.
+        
         
         // update progressbarDay...
         jProgressBarDay.setValue(gameInitializer.getDay());
@@ -106,11 +105,13 @@ public class MainWindow extends javax.swing.JFrame
             String name = gameInitializer.getDrugs().get(i).getName();
             double price = gameInitializer.getDrugs().get(i).getPrice(); 
             int amount = gameInitializer.getDrugs().get(i).getAvailability();
+            
             //System.out.println(()gameInitializer.getDrugs()[i][0].get(0).get);
 //            Object[] data = {"name", "price", "amount"};
            // System.out.println(data);
            // tableModel.addRow(data);
            //model.setRowCount(0);
+           
            model.addRow( new Object[]{ name, price, amount } );
         }
     }
@@ -401,7 +402,7 @@ public class MainWindow extends javax.swing.JFrame
         // TODO add your handling code here:
         String selectedCountry = jComboBoxCountries.getItemAt(jComboBoxCountries.getSelectedIndex());
         boolean gameOver = gameInitializer.nextDay(selectedCountry);
-        updateWindow(); // opdater til det valgte land...
+        updateWindow(); // Update screen (to the selected country, recalculateDrug, update inventory etc)
         if(gameOver)
         {
             this.dispose();
@@ -435,6 +436,7 @@ public class MainWindow extends javax.swing.JFrame
         jLabelMoneyLeft.setText("" + newCash);
         
         // Set user's money in stash
+        gameInitializer.setMoney(newCash);
         
         // Add drug to user's arraylist in Stash and update inventory.
         
@@ -467,6 +469,7 @@ public class MainWindow extends javax.swing.JFrame
         jLabelMoneyLeft.setText("" + newCash);
         
         // Set user's money in stash
+        gameInitializer.setMoney(newCash);
         
         // Remove drug to user's arraylist in Stash and update inventory.
         
