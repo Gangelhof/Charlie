@@ -1,4 +1,5 @@
 
+
 package charlie.control;
 
 import charlie.model.ScoreComparator;
@@ -24,6 +25,8 @@ public class HighscoreController
     {
         //initialising the scores-arraylist
         scores = new ArrayList<User>();
+        createUsers();
+        
     }
 
 
@@ -57,6 +60,45 @@ public class HighscoreController
 //        updateScoreFile();
 //   }
 
+   //creates users as an example of our highscoresystem working properly
+   
+   public void createUsers(){
+       
+       
+       
+       Stash s = new Stash();
+       Stash s2 = new Stash();
+       Stash s3 = new Stash();
+       Stash s4 = new Stash();
+       
+       
+       s.setMoney(1500);
+       s2.setMoney(85);
+       s3.setMoney(100);
+       s4.setMoney(99);
+       
+       
+       
+       User u = new User("Anders", s);
+       User u2 = new User("Børge", s2);
+       User u3 = new User("And", s3);
+       User u4 = new User("A", s4);
+       
+       scores.add(u);
+       scores.add(u2);
+       scores.add(u3);
+       scores.add(u4);
+       
+       updateScoreFile();
+       
+       
+       
+    
+       
+   }
+   
+   
+   
 
     public void loadScoreFile() 
     {
@@ -144,10 +186,12 @@ public class HighscoreController
             x = max;
         }
         while (i < x) {
-            highscoreString += (i + 1) +  "\t\t" + scores.get(i).getStash().getMoney() + "\n";
+            highscoreString += (i + 1 + ": ") +  "\t\t" + scores.get(i).getStash().getMoney() + " " + scores.get(i).getName() + "\n";
             i++;
         }
         return highscoreString;
+        
+        
 }
 
 
