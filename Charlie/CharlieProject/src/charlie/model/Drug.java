@@ -10,10 +10,11 @@ package charlie.model;
  * @author RunEvil
  */
 public class Drug {
-    public String name;
-    public double price;
-    public int availability;
-    public int priceStrategy;
+    private String name;
+    private double price;
+    private int availability;
+    private int priceStrategy;
+    private int userAmount;
 
     public Drug() {
     }
@@ -23,6 +24,7 @@ public class Drug {
         this.price = price;
         this.availability = availability;
         this.priceStrategy = priceStrategy;
+        this.userAmount = 0;
     }
     
     public String getName() {
@@ -55,6 +57,14 @@ public class Drug {
 
     public void setPriceStrategy(int priceStrategy) {
         this.priceStrategy = priceStrategy;
+    }
+
+    public int getUserAmount() {
+        return userAmount;
+    }
+
+    public void setUserAmount(int userAmount) {
+        this.userAmount = userAmount;
     }
     
 }

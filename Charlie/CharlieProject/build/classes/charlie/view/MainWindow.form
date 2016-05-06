@@ -79,8 +79,8 @@
                     <StringItem index="1" value="Heroin"/>
                     <StringItem index="2" value="Amphetamine"/>
                     <StringItem index="3" value="Acid"/>
-                    <StringItem index="4" value="Angel dust"/>
-                    <StringItem index="5" value="Crystal meth"/>
+                    <StringItem index="4" value="Angel Dust"/>
+                    <StringItem index="5" value="Crystal Meth"/>
                     <StringItem index="6" value="Hash"/>
                     <StringItem index="7" value="Weed"/>
                     <StringItem index="8" value="Mushrooms"/>
@@ -170,14 +170,19 @@
                   </Group>
               </Group>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jLabelInventory" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="jScrollPane2" alignment="0" pref="0" max="32767" attributes="0"/>
-                  <Component id="jLabelCurrentDay" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="jProgressBarDay" alignment="0" max="32767" attributes="0"/>
-                  <Component id="jButtonBuySell" alignment="0" min="-2" pref="146" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabelInventory" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabelCurrentDay" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabelPerson" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabelPerson2" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
                   <Component id="jButtonEndGame" alignment="0" max="32767" attributes="0"/>
-                  <Component id="jLabelPerson" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabelPerson2" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="jButtonBuySell" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jProgressBarDay" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
           </Group>

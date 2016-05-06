@@ -64,15 +64,12 @@ public class MainWindow extends javax.swing.JFrame {
         // Calculate new prices on drugs...
         drugControl.calculateDrug();
 
-        // calculate user's money...
-        jLabelMoneyLeft.setText("" + gameInitializer.getMoney()); // Get money from stash.
-
         // update progressbarDay...
         jProgressBarDay.setValue(gameInitializer.getDay());
         jProgressBarDay.setString(gameInitializer.getDay() + "/20");
 
         //Update drugslist..
-        //Update inventory..
+        addDrugsToCountry();
     }
 
     public void addDrugsToCountry() {
@@ -91,7 +88,7 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }
 
-    public void addDrugsToInventory() {
+    public void addDrugsToInventory(String str, int amountBuy) {
         //Clear the table of content
         while (modelInventory.getRowCount() > 0) {
             modelInventory.removeRow(0);
@@ -99,9 +96,9 @@ public class MainWindow extends javax.swing.JFrame {
 
         //Fill up table with drugs
         for (int i = 0; i < gameInitializer.getStashDrugs().size(); i++) {
-            String name = gameInitializer.getDrugs().get(i).getName();
-            int amount = gameInitializer.getDrugs().get(i).getAvailability();
-
+            String name = gameInitializer.getStashDrugs().get(i).getName();
+            int amount = gameInitializer.getStashDrugs().get(i).getUserAmount();
+                
             modelInventory.addRow(new Object[]{name, amount});
         }
     }
@@ -141,7 +138,7 @@ public class MainWindow extends javax.swing.JFrame {
         jButtonBuySell = new javax.swing.JButton();
         jButtonEndGame = new javax.swing.JButton();
 
-        jComboBoxSelectDrug.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Cocaine", "Heroin", "Amphetamine", "Acid", "Angel dust", "Crystal meth", "Hash", "Weed", "Mushrooms", "Valium" }));
+        jComboBoxSelectDrug.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Cocaine", "Heroin", "Amphetamine", "Acid", "Angel Dust", "Crystal Meth", "Hash", "Weed", "Mushrooms", "Valium" }));
 
         jLabelAmount.setText("Amount:");
 
@@ -330,14 +327,17 @@ public class MainWindow extends javax.swing.JFrame {
                             .addComponent(jLabelMoneyLeft))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelInventory)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jLabelCurrentDay)
-                    .addComponent(jProgressBarDay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButtonBuySell, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabelInventory)
+                            .addComponent(jLabelCurrentDay)
+                            .addComponent(jLabelPerson)
+                            .addComponent(jLabelPerson2))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jButtonEndGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabelPerson)
-                    .addComponent(jLabelPerson2))
+                    .addComponent(jButtonBuySell, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jProgressBarDay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(23, 23, 23))
         );
         layout.setVerticalGroup(
@@ -404,44 +404,62 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void jButtonBuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuyActionPerformed
         // TODO add your handling code here:
-
-            // Get amount of selected drug.
+        
+        // Check if an amount has been chosen
+        if (!jFormattedTextFieldAmount.getText().isEmpty()){
+            
+            // Get chosen amount of selected drug.
             int amount = Integer.parseInt(jFormattedTextFieldAmount.getText());
+            // Get amount available of the chosen drug
             int amountDrug = gameInitializer.getDrugs().get(jComboBoxSelectDrug.getSelectedIndex()).getAvailability();
             
-        //Check if amount is available!!!
-        if (amount <= amountDrug) {
+            //Check if amount is available!!!
+            if (amount <= amountDrug) {
             
-            // Get drug from dropdown-list and get price of drug from arraylist.
-            double price = gameInitializer.getDrugs().get(jComboBoxSelectDrug.getSelectedIndex()).getPrice();
+                // Get drug from dropdown-list and get price of drug from arraylist.
+                int tempIndex = jComboBoxSelectDrug.getSelectedIndex();
+                double price = gameInitializer.getDrugs().get(tempIndex).getPrice();
             
-            // calculate price of drugs bought.
-            double drugPrice = price * amount;
-            double moneyLeft = gameInitializer.getMoney();
+                // calculate price of drugs bought.
+                double drugPrice = price * amount;
+                double moneyLeft = gameInitializer.getMoney();
             
-            if(drugPrice <= moneyLeft){
+                if(drugPrice <= moneyLeft){
 
-                // Subtract price of drugs bought from user's money..
-                double newCash = moneyLeft - drugPrice;
-                jLabelMoneyLeft.setText("" + newCash);
+                    // Subtract price of drugs bought from user's money..
+                    double newCash = moneyLeft - drugPrice;
+                    jLabelMoneyLeft.setText("" + newCash);
 
-                // Set user's money in stash
-                gameInitializer.setMoney(newCash);
+                    // Set user's money in stash
+                    gameInitializer.setMoney(newCash);
+                    
+                    //Get name of the chosen drug
+                    String name = (String) jComboBoxSelectDrug.getSelectedItem();
+                            
+                    // Add drug to user's arraylist in Stash 
+                    gameInitializer.setDrugs(name, amount);
+                    addDrugsToInventory(name, amount);
+                    
+                    // set userAmount of the chosen drug in drug
+                    //gameInitializer.setUserAmount(amount);
 
-                // Add drug to user's arraylist in Stash 
-                gameInitializer.setDrugs(gameInitializer.getDrugs().get(jComboBoxSelectDrug.getSelectedIndex()).getName());
-                addDrugsToInventory();
-
-                // Change amount in arraylist and update druglist of country.
-            
+                    // Change amount in arraylist and update druglist of country.
+                    int newAmount = amountDrug - amount;
+                    gameInitializer.setAvailability(name, newAmount);
+                    addDrugsToCountry();
+                   // System.out.println(gameInitializer.getDrugs().get(0).getUserAmount());
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Not enough cash! \nYou cannot afford this amount of drugs! \nPlease try again!");
+                }
             }
-            else{
-                JOptionPane.showMessageDialog(null, "Not enough cash! \nYou cannot afford this amount of drugs! \nPlease try again!");
+            else {
+                JOptionPane.showMessageDialog(null, "Not enough drugs! \nThe amount you have chosen is not available! \nPlease try again!");
             }
         }
-        else {
-            JOptionPane.showMessageDialog(null, "Not enough drugs! \nThe amount you have chosen is not available! \nPlease try again!");
-        }
+        else{
+                JOptionPane.showMessageDialog(null, "Please enter amount of chosen drug!");
+                }
         //NB!!! Laves som metode(r) i DrugController, som kaldes herfra, så selvom udregning osv forgår andet steds.
     }//GEN-LAST:event_jButtonBuyActionPerformed
 
@@ -473,11 +491,14 @@ public class MainWindow extends javax.swing.JFrame {
 
                 // Set user's money in stash
                 gameInitializer.setMoney(newCash);
+                
+                // set userAmount of the chosen drug in drug
+                //gameInitializer.setUserAmount();
 
                 // Remove drug to user's arraylist in Stash and update inventory.
-        
+                
                 // Change amount in arraylist and update druglist of country.
-            
+                
             }
             else{
                 JOptionPane.showMessageDialog(null, "Not enough drugs! \nYou do not have the chosen amount of the drug in your inventory! \nPlease try again!");

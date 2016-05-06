@@ -12,5 +12,5 @@ import charlie.model.Drug;
  * @author RunEvil
  */
 public interface ICalculateDrugs {
-    Drug recalculateDrug(Drug drug);
+    void recalculateDrug();
 }
